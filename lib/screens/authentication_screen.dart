@@ -4,183 +4,161 @@ import '../services/auth_service.dart';
 
 class AuthenticationScreen extends StatefulWidget {
   const AuthenticationScreen({super.key});
-
   @override
   State<AuthenticationScreen> createState() => _AuthenticationScreenState();
 }
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _email = TextEditingController();
-  final _password = TextEditingController();
-  final _confirm = TextEditingController();
-
-  bool _registering = false;
-  bool _loading = false;
-  bool _obscure = true;
-  String? _error;
+  final formKey = GlobalKey<FormState>();
+  final first = TextEditingController();
+  final last = TextEditingController();
+  final email = TextEditingController();
+  final password = TextEditingController();
+  final confirm = TextEditingController();
+  String role = 'Student';
+  bool registering = false;
+  bool busy = false;
+  String? error;
 
   @override
   void dispose() {
-    _email.dispose();
-    _password.dispose();
-    _confirm.dispose();
+    for (final c in [first, last, email, password, confirm]) {
+      c.dispose();
+    }
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate() || _loading) return;
-
+  Future<void> submit() async {
+    if (busy || !formKey.currentState!.validate()) return;
     setState(() {
-      _loading = true;
-      _error = null;
+      busy = true;
+      error = null;
     });
-
     try {
-      if (_registering) {
-        await AuthService.instance.register(_email.text, _password.text);
+      if (registering) {
+        await AuthService.instance.register(
+          firstName: first.text,
+          lastName: last.text,
+          role: role,
+          email: email.text,
+          password: password.text,
+        );
       } else {
-        await AuthService.instance.signIn(_email.text, _password.text);
+        await AuthService.instance.signIn(email.text, password.text);
       }
-      // AuthGate automatically handles navigation.
-    } catch (error) {
-      if (!mounted) return;
-      setState(() => _error = AuthService.errorMessage(error));
+    } catch (e) {
+      if (mounted) setState(() => error = AuthService.errorMessage(e));
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) setState(() => busy = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Firebase Authentication')),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Icon(Icons.lock_person, size: 72),
-                  const SizedBox(height: 20),
-                  Text(
-                    _registering ? 'Create Account' : 'Welcome Back',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 24),
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: const Text('Message Board Vault')),
+    body: Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: Form(
+            key: formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Icon(Icons.forum_outlined, size: 64),
+                const SizedBox(height: 16),
+                Text(
+                  registering ? 'Create account' : 'Welcome back',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 20),
+                if (registering) ...[
                   TextFormField(
-                    controller: _email,
-                    enabled: !_loading,
-                    keyboardType: TextInputType.emailAddress,
+                    controller: first,
+                    decoration: const InputDecoration(labelText: 'First name'),
+                    validator: (v) =>
+                        (v ?? '').trim().isEmpty ? 'Required' : null,
+                  ),
+                  TextFormField(
+                    controller: last,
+                    decoration: const InputDecoration(labelText: 'Last name'),
+                    validator: (v) =>
+                        (v ?? '').trim().isEmpty ? 'Required' : null,
+                  ),
+                  DropdownButtonFormField<String>(
+                    initialValue: role,
+                    decoration: const InputDecoration(labelText: 'Role'),
+                    items: const ['Student', 'Instructor', 'Other']
+                        .map((v) => DropdownMenuItem(value: v, child: Text(v)))
+                        .toList(),
+                    onChanged: busy
+                        ? null
+                        : (v) => setState(() => role = v ?? 'Student'),
+                  ),
+                ],
+                TextFormField(
+                  controller: email,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                  validator: (v) =>
+                      (v ?? '').contains('@') ? null : 'Enter a valid email',
+                ),
+                TextFormField(
+                  controller: password,
+                  obscureText: true,
+                  decoration: const InputDecoration(labelText: 'Password'),
+                  validator: (v) =>
+                      (v ?? '').length < 6 ? 'Use at least 6 characters' : null,
+                ),
+                if (registering)
+                  TextFormField(
+                    controller: confirm,
+                    obscureText: true,
                     decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.email_outlined),
-                      border: OutlineInputBorder(),
+                      labelText: 'Confirm password',
                     ),
-                    validator: (value) {
-                      final email = value?.trim() ?? '';
-                      if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
-                          .hasMatch(email)) {
-                        return 'Enter a valid email address';
-                      }
-                      return null;
-                    },
+                    validator: (v) =>
+                        v == password.text ? null : 'Passwords do not match',
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: _password,
-                    enabled: !_loading,
-                    obscureText: _obscure,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscure ? Icons.visibility : Icons.visibility_off,
-                        ),
-                        onPressed: () => setState(() => _obscure = !_obscure),
-                      ),
-                    ),
-                    validator: (value) {
-                      if ((value ?? '').isEmpty) {
-                        return 'Enter your password';
-                      }
-                      if (_registering && value!.length < 6) {
-                        return 'Use at least 6 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  if (_registering) ...[
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _confirm,
-                      enabled: !_loading,
-                      obscureText: _obscure,
-                      decoration: const InputDecoration(
-                        labelText: 'Confirm Password',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value != _password.text) {
-                          return 'Passwords do not match';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                  if (_error != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      _error!,
+                if (error != null)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: Text(
+                      error!,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.error,
                       ),
                     ),
-                  ],
-                  const SizedBox(height: 24),
-                  FilledButton(
-                    onPressed: _loading ? null : _submit,
-                    child: _loading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(_registering ? 'Register' : 'Sign In'),
                   ),
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: _loading
-                        ? null
-                        : () {
-                            setState(() {
-                              _registering = !_registering;
-                              _error = null;
-                              _formKey.currentState?.reset();
-                              _email.clear();
-                              _password.clear();
-                              _confirm.clear();
-                            });
-                          },
-                    child: Text(
-                      _registering
-                          ? 'Already have an account? Sign In'
-                          : 'New user? Create an account',
-                    ),
+                const SizedBox(height: 18),
+                FilledButton(
+                  onPressed: busy ? null : submit,
+                  child: Text(
+                    busy
+                        ? 'Please wait...'
+                        : (registering ? 'Register' : 'Sign in'),
                   ),
-                ],
-              ),
+                ),
+                TextButton(
+                  onPressed: busy
+                      ? null
+                      : () => setState(() {
+                          registering = !registering;
+                          error = null;
+                        }),
+                  child: Text(
+                    registering
+                        ? 'Already registered? Sign in'
+                        : 'New user? Create account',
+                  ),
+                ),
+              ],
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }

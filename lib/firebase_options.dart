@@ -53,10 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBue75NoOonPJosZ4wgBSfpG-n0nzHG8Zc',
-    appId: '1:850931654134:android:503ef40aa72851e6057bd7',
-    messagingSenderId: '850931654134',
-    projectId: 'mad4360-firebase-productapp',
-    storageBucket: 'mad4360-firebase-productapp.firebasestorage.app',
+    apiKey: 'AIzaSyA0y5Xft5eUZN5KhpYw24ptmivgUQm9Pt0',
+    appId: '1:877656017522:android:d2cf3c090dbb57848cd0eb',
+    messagingSenderId: '877656017522',
+    projectId: 'mad4360-hw02-messageboard',
+    storageBucket: 'mad4360-hw02-messageboard.firebasestorage.app',
   );
 }

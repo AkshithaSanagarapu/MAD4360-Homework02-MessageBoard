@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "850931654134",
-    "project_id": "mad4360-firebase-productapp",
-    "storage_bucket": "mad4360-firebase-productapp.firebasestorage.app"
+    "project_number": "877656017522",
+    "project_id": "mad4360-hw02-messageboard",
+    "storage_bucket": "mad4360-hw02-messageboard.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:850931654134:android:503ef40aa72851e6057bd7",
+        "mobilesdk_app_id": "1:877656017522:android:d2cf3c090dbb57848cd0eb",
         "android_client_info": {
           "package_name": "com.example.my_product_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBue75NoOonPJosZ4wgBSfpG-n0nzHG8Zc"
+          "current_key": "AIzaSyA0y5Xft5eUZN5KhpYw24ptmivgUQm9Pt0"
         }
       ],
       "services": {
