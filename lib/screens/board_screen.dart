@@ -14,6 +14,8 @@ class BoardScreen extends StatefulWidget {
 class _BoardScreenState extends State<BoardScreen> {
   final input = TextEditingController();
   bool saving = false;
+  String? _pendingOperationId;
+  String? _pendingMessageText;
   String? error;
   @override
   void dispose() {
@@ -28,7 +30,21 @@ class _BoardScreenState extends State<BoardScreen> {
       error = null;
     });
     try {
-      await BoardService.instance.createMessage(input.text, widget.authorName);
+      final content = input.text.trim();
+
+      if (_pendingOperationId == null || _pendingMessageText != content) {
+        _pendingOperationId = BoardService.instance.newMessageOperationId();
+        _pendingMessageText = content;
+      }
+
+      await BoardService.instance.createMessage(
+        content,
+        widget.authorName,
+        operationId: _pendingOperationId!,
+      );
+
+      _pendingOperationId = null;
+      _pendingMessageText = null;
       input.clear();
     } catch (e) {
       if (mounted) setState(() => error = AuthService.errorMessage(e));

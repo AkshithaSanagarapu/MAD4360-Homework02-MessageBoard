@@ -10,7 +10,13 @@ class BoardService {
   Stream<QuerySnapshot<Map<String, dynamic>>> watchMessages() =>
       _messages.orderBy('createdAt', descending: true).snapshots();
 
-  Future<void> createMessage(String text, String authorName) async {
+  String newMessageOperationId() => _messages.doc().id;
+
+  Future<void> createMessage(
+    String text,
+    String authorName, {
+    required String operationId,
+  }) async {
     final user = _auth.currentUser;
     if (user == null) throw StateError('Sign in first.');
     final content = text.trim();
@@ -19,7 +25,7 @@ class BoardService {
     }
     // Stable ID for this submission. A second tap on the same operation
     // cannot create a second document.
-    final ref = _messages.doc();
+    final ref = _messages.doc(operationId);
     await ref.set({
       'text': content,
       'authorUid': user.uid,
