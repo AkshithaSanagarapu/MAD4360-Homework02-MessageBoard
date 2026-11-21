@@ -1,0 +1,44 @@
+[
+  {
+    "id": "legacy-alice",
+    "text": "My first message",
+    "authorUid": "alice",
+    "authorName": "Alice Test",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1790856000,
+      "nanoseconds": 0
+    },
+    "legacySource": "v1-seed",
+    "schemaVersion": 2,
+    "editedAt": null
+  },
+  {
+    "id": "legacy-bob",
+    "text": "Hello from the old schema",
+    "authorUid": "bob",
+    "authorName": "Bob Test",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1790856000,
+      "nanoseconds": 0
+    },
+    "legacySource": "v1-seed",
+    "schemaVersion": 2,
+    "editedAt": null
+  },
+  {
+    "id": "legacy-third",
+    "text": "Preserve this record",
+    "authorUid": "alice",
+    "authorName": "Alice Test",
+    "createdAt": {
+      "type": "firestore/timestamp/1.0",
+      "seconds": 1790856000,
+      "nanoseconds": 0
+    },
+    "legacySource": "v1-seed",
+    "schemaVersion": 2,
+    "editedAt": null
+  }
+]
