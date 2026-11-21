@@ -1,3 +1,4 @@
+const assert = require('node:assert/strict');
 const { test, before, after } = require('node:test');
 const { initializeTestEnvironment, assertFails, assertSucceeds } =
   require('@firebase/rules-unit-testing');
@@ -100,4 +101,28 @@ test('Correct author can create, read, edit, and delete', async () => {
   }));
 
   await assertSucceeds(deleteDoc(ref));
+});
+
+test('Same operation ID cannot create duplicate messages', async () => {
+  const db = env.authenticatedContext('alice').firestore();
+  const ref = doc(db, 'messages/spice4-fixed-operation');
+
+  const message = {
+    text: 'Spice 4 duplicate protection test',
+    authorUid: 'alice',
+    authorName: 'Alice Test',
+    createdAt: serverTimestamp(),
+    editedAt: null,
+    schemaVersion: 2,
+  };
+
+  await assertSucceeds(setDoc(ref, message));
+
+  // A retry uses the same document ID.
+  // Current rules reject overwriting the existing message.
+  await assertFails(setDoc(ref, message));
+
+  const result = await getDoc(ref);
+  assert.equal(result.exists(), true);
+  assert.equal(result.data().text, message.text);
 });
