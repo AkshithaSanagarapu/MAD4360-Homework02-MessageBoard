@@ -1,0 +1,16 @@
+✔ Signed-out user cannot read messages (85.522042ms)
+[2026-11-21T05:44:53.194Z]  @firebase/firestore: Firestore (13.4.0): GrpcConnection RPC 'Write' stream 0x8a7000e2 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L32:24 for 'update' @ L32, false for 'update' @ L32
+✔ Another user cannot edit Alice message (13.058333ms)
+[2026-11-21T05:44:53.207Z]  @firebase/firestore: Firestore (13.4.0): GrpcConnection RPC 'Write' stream 0x8a7000e3 error. Code: 7 Message: 7 PERMISSION_DENIED: 
+evaluation error at L22:24 for 'create' @ L22, evaluation error at L32:24 for 'update' @ L32, false for 'create' @ L22
+✔ Forged authorUid is rejected (12.39925ms)
+✔ Correct author can create, read, edit, and delete (23.794834ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 261.999625

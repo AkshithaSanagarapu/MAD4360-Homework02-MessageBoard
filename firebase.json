@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"mad4360-hw02-messageboard","appId":"1:877656017522:android:d2cf3c090dbb57848cd0eb","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"mad4360-hw02-messageboard","configurations":{"android":"1:877656017522:android:d2cf3c090dbb57848cd0eb"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "mad4360-hw02-messageboard",
+          "appId": "1:877656017522:android:d2cf3c090dbb57848cd0eb",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "mad4360-hw02-messageboard",
+          "configurations": {
+            "android": "1:877656017522:android:d2cf3c090dbb57848cd0eb"
+          }
+        }
+      }
+    }
+  },
+  "emulators": {
+    "singleProjectMode": true,
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
+    },
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8080
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

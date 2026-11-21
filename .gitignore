@@ -49,3 +49,6 @@ app.*.map.json
 
 # Submission APK
 Activity13_Sanagarapu_Akshitha.apk
+
+# Firebase security test dependencies
+node_modules/
